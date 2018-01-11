@@ -42,7 +42,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://localhost:3000/manage/api/v1/index_requests/buildings'
+  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/buildings'
 
 ```
 > The above command POST data
@@ -113,7 +113,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://localhost:3000/manage/api/v1/index_requests/floors'
+  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/floors'
 
 ```
 > The above command POST data
@@ -176,7 +176,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://localhost:3000/manage/api/v1/index_requests/departments'
+  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/departments'
 
 ```
 > The above command POST data
@@ -237,7 +237,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://localhost:3000/manage/api/v1/index_requests/bookings'
+  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/bookings'
 
 ```
 > The above command POST data
@@ -288,7 +288,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://localhost:3000/manage/api/v1/index_requests/meetings'
+  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/meetings'
 
 ```
 > The above command POST data
