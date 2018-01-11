@@ -3,13 +3,9 @@ title: API Reference
 
 language_tabs:
   - shell
-  - ruby
-  - python
-  - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='http://data.rifiniti.com'>Data environment</a>
 
 includes:
   - errors
@@ -19,119 +15,109 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
-
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Welcome to the Rifiniti API!
 
 # Authentication
 
 > To authorize, use this code:
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
 ```shell
 # With shell, you can just pass the correct header with each request
 curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -u ibardarov@rifiniti.com:11223344 \
+
+  You must replace <code>11223344</code> with your personal API key.
 ```
 
-```javascript
-const kittn = require('kittn');
+For authentication you have to use your own manage username/password.
 
-let api = kittn.authorize('meowmeowmeow');
-```
 
-> Make sure to replace `meowmeowmeow` with your API key.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+# Indexing API
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Index buildings
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+curl -i -XPOST -d \
+  '{ "from_time": 0, "to_time": 1439078400, "ids": [206, 516, 569, 581, 582, 583, 695], "elasticsearch_types": ["AttendanceIndex::AttendanceBadge"] }' \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -u 'ibardarov@rifiniti.com:11223344' \
+  'http://localhost:3000/manage/api/v1/index_requests/buildings'
+
 ```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
-```
-
-> The above command returns JSON structured like this:
+> The above command POST data
 
 ```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
+{
+  "from_time": 0,
+  "to_time": 1439078400,
+  "ids": [
+    206,
+    516,
+    569,
+    581,
+    582,
+    583,
+    695
+  ],
+  "elasticsearch_types": [
+    "AttendanceIndex::AttendanceBadge"
+  ]
+}
 ```
 
-This endpoint retrieves all kittens.
+> The JSON response
+
+```json
+{"data":{"request_id":"8929f95c-b4bd-47e1-9759-3a30ab80d2db"}}
+```
+
+This endpoint creates index or removal requests.
+Also it supports buildings, floors, departments. The only caveat is that you can't mix ids from different clients and types.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`POST http://example.com/manage/api/v1/index_requests/building`
 
 ### Query Parameters
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+Parameter | Type | Example | Description
+--------- | ---- | ------- | -----------
+from_time | unix timestamp | 1439078400 | from when the indexing starts - inclusive
+to_time | unix timestamp | 1439078401 | the end time for the indexing period - inclusive
+ids | comma separated list of ids | 717,718 | The ids which we want to index. They could be building/floor/departments. check the id_type
+id_type | 1, 2 or 3 | 1 |1 - building ids, 2 - floor ids, 3 - department ids
+from_date | date | 1 |1 - building ids, 2 - floor ids, 3 - department ids
+
+In one request you can't mix ids from different clients!
+
+
+- "AttendanceIndex::AttendanceBadge"
+- "AttendanceIndex::AttendanceWifi"
+- "DepartmentIndex::MobilityBadgeDepartment"
+- "DepartmentIndex::MobilityWifiDepartment"
+- "OptimoIndex::BadgeOccupancyByBuilding"
+- "OptimoIndex::BadgeOccupancyByDepartment"
+- "OptimoIndex::BadgeOccupancyByFloor"
+- "OptimoIndex::HourlyArrivalsBadge"
+- "OptimoIndex::HourlyArrivalsBadgeByDepartment"
+- "OptimoIndex::MobilityBadge"
+- "OptimoIndex::MobilityWifi"
+- "OptimoIndex::PresenceOccupancy"
+- "OptimoIndex::PresenceOccupancyByDepartment"
+- "WifiIndex::HourlyArrivalsWifi"
+- "WifiIndex::Occupancy"
 
 <aside class="success">
 Remember — a happy kitten is an authenticated kitten!
 </aside>
+
+### Response
+
+index_request_id - is the id of the worker which will process the index requests. It might fail or it might succeed.
 
 ## Get a Specific Kitten
 
