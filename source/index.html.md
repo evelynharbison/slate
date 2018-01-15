@@ -42,7 +42,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/buildings'
+  'https://internal-api.rifiniti.com/api/v1/index_requests/buildings'
 
 ```
 > The above command POST data
@@ -73,9 +73,9 @@ The only caveat is that you can't mix ids from different clients and types.
 
 ### HTTP Request
 
-- `POST https://internal-api.rifiniti.com/manage/api/v1/index_requests/buildings` - for index requests
-- `DELETE https://internal-api.rifiniti.com/manage/api/v1/index_requests/buildings` - for delete requests
-- `GET https://internal-api.rifiniti.com/manage/api/v1/index_requests/buildings/<request_id>` - for getting the status/progress of request
+- `POST https://internal-api.rifiniti.com/api/v1/index_requests/buildings` - for index requests
+- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/buildings` - for delete requests
+- `GET https://internal-api.rifiniti.com/api/v1/index_requests/buildings/<request_id>` - for getting the status/progress of request
 
 ### POST/DELETE Query Parameters
 
@@ -113,7 +113,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/floors'
+  'https://internal-api.rifiniti.com/api/v1/index_requests/floors'
 
 ```
 > The above command POST data
@@ -144,9 +144,9 @@ The only caveat is that you can't mix ids from different clients and types.
 
 ### HTTP Request
 
-- `POST https://internal-api.rifiniti.com/manage/api/v1/index_requests/floors` - for index requests
-- `DELETE https://internal-api.rifiniti.com/manage/api/v1/index_requests/floors` - for delete requests
-- `GET https://internal-api.rifiniti.com/manage/api/v1/index_requests/floors/<request_id>` - for getting the status/progress of request
+- `POST https://internal-api.rifiniti.com/api/v1/index_requests/floors` - for index requests
+- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/floors` - for delete requests
+- `GET https://internal-api.rifiniti.com/api/v1/index_requests/floors/<request_id>` - for getting the status/progress of request
 
 ### POST/DELETE Query Parameters
 
@@ -176,7 +176,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/departments'
+  'https://internal-api.rifiniti.com/api/v1/index_requests/departments'
 
 ```
 > The above command POST data
@@ -207,9 +207,9 @@ The only caveat is that you can't mix ids from different clients and types.
 
 ### HTTP Request
 
-- `POST https://internal-api.rifiniti.com/manage/api/v1/index_requests/departments` - for index requests
-- `DELETE https://internal-api.rifiniti.com/manage/api/v1/index_requests/departments` - for delete requests
-- `GET https://internal-api.rifiniti.com/manage/api/v1/index_requests/departments/<request_id>` - for getting the status/progress of request
+- `POST https://internal-api.rifiniti.com/api/v1/index_requests/departments` - for index requests
+- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/departments` - for delete requests
+- `GET https://internal-api.rifiniti.com/api/v1/index_requests/departments/<request_id>` - for getting the status/progress of request
 
 ### POST/DELETE Query Parameters
 
@@ -237,7 +237,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/bookings'
+  'https://internal-api.rifiniti.com/api/v1/index_requests/bookings'
 
 ```
 > The above command POST data
@@ -264,9 +264,9 @@ The only caveat is that you can't mix ids from different clients and types.
 
 ### HTTP Request
 
-- `POST https://internal-api.rifiniti.com/manage/api/v1/index_requests/bookings` - for index requests
-- `DELETE https://internal-api.rifiniti.com/manage/api/v1/index_requests/bookings` - for delete requests
-- `GET https://internal-api.rifiniti.com/manage/api/v1/index_requests/bookings/<request_id>` - for getting the status/progress of request
+- `POST https://internal-api.rifiniti.com/api/v1/index_requests/bookings` - for index requests
+- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/bookings` - for delete requests
+- `GET https://internal-api.rifiniti.com/api/v1/index_requests/bookings/<request_id>` - for getting the status/progress of request
 
 ### POST/DELETE Query Parameters
 
@@ -288,7 +288,7 @@ curl -i -XPOST -d \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/manage/api/v1/index_requests/meetings'
+  'https://internal-api.rifiniti.com/api/v1/index_requests/meetings'
 
 ```
 > The above command POST data
@@ -315,9 +315,9 @@ The only caveat is that you can't mix ids from different clients and types.
 
 ### HTTP Request
 
-- `POST https://internal-api.rifiniti.com/manage/api/v1/index_requests/meetings` - for index requests
-- `DELETE https://internal-api.rifiniti.com/manage/api/v1/index_requests/meetings` - for delete requests
-- `GET https://internal-api.rifiniti.com/manage/api/v1/index_requests/meetings/<request_id>` - for getting the status/progress of request
+- `POST https://internal-api.rifiniti.com/api/v1/index_requests/meetings` - for index requests
+- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/meetings` - for delete requests
+- `GET https://internal-api.rifiniti.com/api/v1/index_requests/meetings/<request_id>` - for getting the status/progress of request
 
 ### POST/DELETE Query Parameters
 
