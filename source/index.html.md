@@ -1,332 +1,376 @@
----
-title: API Reference
-
-language_tabs:
-  - shell
-
-toc_footers:
-  - <a href='https://data.rifiniti.com'>Data environment</a>
-
-includes:
-  - errors
-
-search: true
----
-
 # Introduction
 
-Welcome to the Rifiniti API!
+This documentation is for the Rifiniti client API for data extraction.
+
+The API uses jwt tokens for authorization of the requests and that token must be present in the headers of each request. See [Authentication](#Authentication) for instruction on how to accuire a token.
 
 # Authentication
 
-> To authorize, use this code:
+  > Example authentication request:
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "<api-endpoint>"
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -u "ibardarov@rifiniti.com:11223344" \
+  ```shell
+  curl -XPOST \
+    -H "Content-Type: application/json" \
+    -d '{ "email": "name@domain.com", "password": "SuperSecurePass"}' \
+    'http://subdomain.rifiniti.com/client_api/authenticate'
+  ```
 
-```
+  > If authentication is successfull you will get json with the following structure:
 
-For authentication you have to use your own manage username/password.
+  ```json
+  {
+    "auth_token": "your token to be used
+     in all other request in order to authorize them"
+  }
+  ```
 
-# Indexing API
+  To accuire a token you must authenticate with your email and password for Optimo.
 
-## Index buildings
+  `POST /client_api/authenticate`
 
-```shell
-curl -i -XPOST -d \
-  '{ "from_time": 1438078400, "to_time": 1439078400, "ids": [206, 516], "elasticsearch_types": ["AttendanceIndex::AttendanceBadge", "AttendanceIndex::AttendanceWifi"] }' \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/api/v1/index_requests/buildings'
+  <aside class="notice">
+    You must replace `subdomain` in the examples on the side with your company Rifiniti subdomain.
+  </aside>
 
-```
-> The above command POST data
+  **Headers**
 
-```json
-{
-  "from_time": 1438078400,
-  "to_time": 1439078400,
-  "ids": [
-    206,
-    516
-  ],
-  "elasticsearch_types": [
-    "AttendanceIndex::AttendanceBadge",
-    "AttendanceIndex::AttendanceWifi"
+    Type          | Header Name    | Value
+    ------------- | -------------- | --------------
+    required      | Content-Type   | application/json
+
+  **Parameters**
+
+    Type          | Key           | Example Value
+    ------------- | ------------- | -------------
+    required      | email         | name@domain.com
+    required      | password      | SupperSecurePass
+
+# Buildings
+  All the requests need to be authorized with the jwt token returned from the ```authenticate``` endpoint. It is also required to specify the version of the API on every request.
+
+  <aside class="notice">
+    For now there is only ```v1``` but version is required for future convinience. 
+  </aside>
+
+  **Headers**
+
+  Type          | Header Name     | Value
+  ------------- | --------------- | --------------
+  required      | Authorization   | your jwt token
+  required      | Accept-Version  | v1
+
+## Metadata
+  Buildings metadata contains the identificator of the building which can be used to query results for that particular building as well as the service level the building have.
+
+### All Buildings
+
+  > Metadata for all buildings:
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/meta/buildings'
+  ```
+  > JSON response structure
+
+  ```json
+  [
+    {
+        "building_id": "BLD1",
+        "service_level": "advanced"
+    },
+    {
+        "building_id": "BLD2",
+        "service_level": "essential"
+    }
   ]
-}
-```
+  ```
 
-> The JSON response
+  List all monitored buildings with their identificator and service level.
 
-```json
-{"data":{"request_id":"8929f95c-b4bd-47e1-9759-3a30ab80d2db"}}
-```
+  `GET/client_api/meta/buildings`
 
-This endpoint creates index and delete requests.
-The only caveat is that you can't mix ids from different clients and types.
+  The call returns an array of JSONs.
 
-### HTTP Request
+### Single Building
 
-- `POST https://internal-api.rifiniti.com/api/v1/index_requests/buildings` - for index requests
-- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/buildings` - for delete requests
-- `GET https://internal-api.rifiniti.com/api/v1/index_requests/buildings/<request_id>` - for getting the status/progress of request
+  > Metadata for single building:
 
-### POST/DELETE Query Parameters
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/meta/building/BLD1'
+  ```
+  > JSON response structure
 
-Parameter           | Type           | Example    | Description
-------------------- | -------------- | ---------- | -----------
-from_time           | unix timestamp | 1439078400 | from when the indexing starts (inclusive)
-to_time             | unix timestamp | 1439078401 | the end time for the indexing period (inclusive)
-ids                 | integer array  | [717, 718] | The ids which we want to index/delete (depending on the https verb). They must be valid building ids.
-elasticsearch_types | string array   | ["AttendanceIndex::AttendanceBadge", "AttendanceIndex::AttendanceWifi"] | The list of elasticsearch types we want to index/delete (see list of the valid types below).
+  ```json
+  {
+    "building_id": "BLD1",
+    "service_level": "advanced"
+  }
+  ```
 
-In one request you can't mix ids from different clients!
+  Find out single building service level.
 
-### List of valid elasticsearch types
-- AttendanceIndex::AttendanceBadge
-- DepartmentIndex::MobilityBadgeDepartment
-- OptimoIndex::BadgeOccupancyByDepartment
-- OptimoIndex::BadgeOccupancyByBuilding
-- OptimoIndex::HourlyArrivalsBadge
-- OptimoIndex::MobilityBadge
-- OptimoIndex::BadgeOccupancyByFloor
-- OptimoIndex::PresenceOccupancy
-- OptimoIndex::PresenceOccupancyByDepartment
-- OptimoIndex::HourlyArrivalsBadgeByDepartment
-- AttendanceIndex::AttendanceWifi
-- DepartmentIndex::MobilityWifiDepartment
-- OptimoIndex::MobilityWifi
-- WifiIndex::HourlyArrivalsWifi
-- WifiIndex::Occupancy
+  `GET /client_api/meta/building/{{Building Identifier}}`
 
-## Index floors
+  The call returns a single JSON.
 
-```shell
-curl -i -XPOST -d \
-  '{ "from_time": 1438078400, "to_time": 1439078400, "ids": [482, 483], "elasticsearch_types": ["AttendanceIndex::AttendanceBadge", "AttendanceIndex::AttendanceWifi"] }' \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/api/v1/index_requests/floors'
+## Results
 
-```
-> The above command POST data
+  **Parameters**
 
-```json
-{
-  "from_time": 1438078400,
-  "to_time": 1439078400,
-  "ids": [
-    482,
-    483
-  ],
-  "elasticsearch_types": [
-    "AttendanceIndex::AttendanceBadge",
-    "AttendanceIndex::AttendanceWifi"
+  All of the following are ```GET``` parameters.
+
+  *Obligatory*
+
+  Type          | Key           | Value Type    | Example Value
+  ------------- | ------------- | ------------- | -------------
+  required      | from          | String        | 2018-01-24
+  required      | to            | String        | 2018-01-24
+
+  ```from``` is transformed to the beggining of day and
+  ```to``` is transformed to the end of day
+
+  So setting ```from``` and ```to``` to the same value will return the results for that day.
+
+  *Optional*
+
+   Type         | Key                        | Value Type | Default Value
+  ------------- | -------------------------- | ---------- | -------------
+  optional      | only_working_hours         | Boolean    | true
+  optional      | only_working_days          | Boolean    | false
+  optional      | utilization_over_headcount | Boolean    | false
+  optional      | utilization_over_capacity  | Boolean    | true
+  optional      | add_meeting_capacity       | Boolean    | false
+  optional      | add_support_capacity       | Boolean    | false
+
+  *Note: Some of the params are mutually exclusive
+
+- utilization_over_headcount and utilization_over_capacity are mutually exclusive
+- utilization_over_headcount and add_meeting_capacity are mutually exclusive
+- utilization_over_headcount and add_support_capacity are mutually exclusive
+
+  By default utilization percentage is calculated with regards to workstation capacity.
+
+  When ```add_meeting_capacity``` is ```true```, the meeting capacity will be taken into account when calculating utilization percentage.
+
+  When ```add_support_capacity``` is ```true```, the support capacity will be taken into account when calculating utilization percentage.
+
+  If ```utilization_over_headcount``` is ```true``` the utilization % will be calculated with regards to the headcount instead of the capacity.
+
+### Single Building
+
+  > Results for single building:
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/results/building/BLD1?from=2018-01-24&to=2018-01-24'
+  ```
+
+  > JSON response structure
+
+  ```json
+  {
+    "building_id": "BLD1",
+    "service_level": "advanced",
+    "area": 132435,
+    "workstation_space_capacity": 903,
+    "meeting_space_capacity": 251,
+    "support_space_capacity": 14,
+    "headcount": 759,
+    "attendance": 292.2,
+    "average_utilization": 253.4,
+    "peak_utilization": 296,
+    "average_utilization_percent": 28.1,
+    "peak_utilization_percent": 32.8,
+    "deskbound": 77.8,
+    "internally_mobile": 36,
+    "externally_mobile": 304.3,
+    "remote": 14.5,
+    "deskbound_percent": 18,
+    "internally_mobile_percent": 8.3,
+    "externally_mobile_percent": 70.4,
+    "remote_percent": 3.4
+  }
+  ```
+
+  Get results for specific building
+
+  `GET /client_api/results/building/{{Building Identifier}}`
+
+### All Buildings
+
+  > Results for all buildings:
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/results/buildings?from=2018-01-24&to=2018-01-24'
+  ```
+
+  Get results for all buildings
+
+  `GET /client_api/results/building/{{Building Identifier}}`
+
+  Responds with an array of jsons with results for each building.
+
+# Floors
+
+## Metadata
+  Floors metadata contains the floor level, the building identificator, the area and the service level of the floor.
+
+### All Floors in a building
+
+  > Metadata for all floors in a building:
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors'
+  ```
+
+  > JSON response structure
+
+  ```json
+  [
+    {
+      "building_id": "BLD1",
+      "floor_level": 1,
+      "service_level": "advanced",
+      "area": 12345
+    },
+    {
+      "building_id": "BLD1",
+      "floor_level": 2,
+      "service_level": "advanced",
+      "area": 54321
+    }
   ]
+  ```
+
+  List the floors inside of a building with metadata for them.
+
+  `GET /client_api/meta/building/{{Building Identifier}}/floors`
+
+  The call returns an array of JSONs.
+
+### Single Floor
+
+  > Metadata for a floor:
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors/2'
+  ```
+
+  > JSON response structure
+
+  ```json
+  {
+    "building_id": "BLD1",
+    "floor_level": 2,
+    "service_level": "advanced",
+    "area": 54321
+  }
+  ```
+
+  Get metadata for floor.
+
+  `GET /client_api/meta/building/{{Building Identifier}}/floors/{{Floor Level}}`
+
+  The call returns a JSON.
+
+## Results
+
+  **Parameters**
+
+  All of the following are ```GET``` parameters.
+
+  *Obligatory*
+
+  Type          | Key           | Value Type    | Example Value
+  ------------- | ------------- | ------------- | -------------
+  required      | from          | String        | 2018-01-24
+  required      | to            | String        | 2018-01-24
+
+  ```from``` is transformed to the beggining of day and
+  ```to``` is transformed to the end of day
+
+  So setting ```from``` and ```to``` to the same value will return the results for that day.
+
+  *Optional*
+
+   Type         | Key                        | Value Type | Default Value
+  ------------- | -------------------------- | ---------- | -------------
+  optional      | only_working_hours         | Boolean    | true
+  optional      | only_working_days          | Boolean    | false
+  optional      | utilization_over_capacity  | Boolean    | true
+  optional      | add_meeting_capacity       | Boolean    | false
+  optional      | add_support_capacity       | Boolean    | false
+
+  By default utilization percentage is calculated with regards to workstation capacity.
+
+  When ```add_meeting_capacity``` is ```true```, the meeting capacity will be taken into account when calculating utilization percentage.
+
+  When ```add_support_capacity``` is ```true```, the support capacity will be taken into account when calculating utilization percentage.
+
+### Single floor
+
+  > Results for single floor
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/results/building/BLD1/floors/2?from=2018-01-24&to=2018-01-24'
+  ```
+
+  > JSON response structure
+
+  ```json
+  {
+    "building": "BLD1",
+    "floor_level": 2,
+    "service_level": "advanced",
+    "area": 54321,
+    "workstation_space_capacity": 42,
+    "meeting_space_capacity": 10,
+    "support_space_capacity": 0,
+    "average_utilization": 21,
+    "peak_utilization": 31.5,
+    "average_utilization_percent": 50,
+    "peak_utilization_percent": 75
 }
-```
+  ```
 
-> The JSON response
+  Get metadata for floor.
 
-```json
-{"data":{"request_id":"8929f95c-b4bd-47e1-9759-3a30ab80d2db"}}
-```
+  `GET /client_api/results/building/{{Building Identifier}}/floors/{{Floor Level}}`
 
-This endpoint creates index and delete requests.
-The only caveat is that you can't mix ids from different clients and types.
+  The call returns a JSON.
 
-### HTTP Request
+### All floors in a building
 
-- `POST https://internal-api.rifiniti.com/api/v1/index_requests/floors` - for index requests
-- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/floors` - for delete requests
-- `GET https://internal-api.rifiniti.com/api/v1/index_requests/floors/<request_id>` - for getting the status/progress of request
+  > Results for all floors inside a building
 
-### POST/DELETE Query Parameters
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'http://subdomain.rifiniti.com/client_api/results/building/BLD1/floors?from=2018-01-24&to=2018-01-24'
+  ```
 
-Parameter           | Type           | Example    | Description
-------------------- | -------------- | ---------- | -----------
-from_time           | unix timestamp | 1439078400 | from when the indexing starts (inclusive)
-to_time             | unix timestamp | 1439078401 | the end time for the indexing period (inclusive)
-ids                 | integer array  | [482, 483] | The ids which we want to index/delete (depending on the https verb). They must be valid floor ids.
-elasticsearch_types | string array   | ["AttendanceIndex::AttendanceBadge", "AttendanceIndex::AttendanceWifi"] | The list of elasticsearch types we want to index/delete (see list of the valid types below).
+  List results for all floors in a building.
 
-In one request you can't mix ids from different clients!
+  `GET /client_api/results/building/{{Building Identifier}}/floors`
 
-### List of valid elasticsearch types
-- AttendanceIndex::AttendanceBadge
-- AttendanceIndex::AttendanceWifi
-- OptimoIndex::BadgeOccupancyByDepartment
-- OptimoIndex::BadgeOccupancyByFloor
-- OptimoIndex::HourlyArrivalsBadge
-- OptimoIndex::HourlyArrivalsBadgeByDepartment
-- WifiIndex::Occupancy
-
-## Index departments
-
-```shell
-curl -i -XPOST -d \
-  '{ "from_time": 1438078400, "to_time": 1439078400, "ids": [1686, 17038], "elasticsearch_types": ["DepartmentIndex::MobilityBadgeDepartment", "OptimoIndex::BadgeOccupancyByDepartment"] }' \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/api/v1/index_requests/departments'
-
-```
-> The above command POST data
-
-```json
-{
-  "from_time": 1438078400,
-  "to_time": 1439078400,
-  "ids": [
-    482,
-    483
-  ],
-  "elasticsearch_types": [
-    "DepartmentIndex::MobilityBadgeDepartment",
-    "OptimoIndex::BadgeOccupancyByDepartment"
-  ]
-}
-```
-
-> The JSON response
-
-```json
-{"data":{"request_id":"8929f95c-b4bd-47e1-9759-3a30ab80d2db"}}
-```
-
-This endpoint creates index and delete requests.
-The only caveat is that you can't mix ids from different clients and types.
-
-### HTTP Request
-
-- `POST https://internal-api.rifiniti.com/api/v1/index_requests/departments` - for index requests
-- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/departments` - for delete requests
-- `GET https://internal-api.rifiniti.com/api/v1/index_requests/departments/<request_id>` - for getting the status/progress of request
-
-### POST/DELETE Query Parameters
-
-Parameter           | Type           | Example    | Description
-------------------- | -------------- | ---------- | -----------
-from_time           | unix timestamp | 1439078400 | from when the indexing starts (inclusive)
-to_time             | unix timestamp | 1439078401 | the end time for the indexing period (inclusive)
-ids                 | integer array  | [1686, 17038] | The ids which we want to index/delete (depending on the https verb). They must be valid department ids.
-elasticsearch_types | string array   | ["DepartmentIndex::MobilityBadgeDepartment", "OptimoIndex::BadgeOccupancyByDepartment"] | The list of elasticsearch types we want to index/delete (see list of the valid types below).
-
-In one request you can't mix ids from different clients!
-
-### List of valid elasticsearch types
-- DepartmentIndex::MobilityBadgeDepartment
-- DepartmentIndex::MobilityWifiDepartment
-- OptimoIndex::BadgeOccupancyByDepartment
-- OptimoIndex::HourlyArrivalsBadgeByDepartment
-- OptimoIndex::PresenceOccupancyByDepartment
-
-## Index bookings
-
-```shell
-curl -i -XPOST -d \
-  '{ "ids": [63], "elasticsearch_types": ["BookingIndex::Booking"] }' \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/api/v1/index_requests/bookings'
-
-```
-> The above command POST data
-
-```json
-{
-  "ids": [
-    63
-  ],
-  "elasticsearch_types": [
-    "BookingIndex::Booking"
-  ]
-}
-```
-
-> The JSON response
-
-```json
-{"data":{"request_id":"8929f95c-b4bd-47e1-9759-3a30ab80d2db"}}
-```
-
-This endpoint creates index and delete requests.
-The only caveat is that you can't mix ids from different clients and types.
-
-### HTTP Request
-
-- `POST https://internal-api.rifiniti.com/api/v1/index_requests/bookings` - for index requests
-- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/bookings` - for delete requests
-- `GET https://internal-api.rifiniti.com/api/v1/index_requests/bookings/<request_id>` - for getting the status/progress of request
-
-### POST/DELETE Query Parameters
-
-Parameter           | Type           | Example    | Description
-------------------- | -------------- | ---------- | -----------
-ids                 | integer array  | [63] | The ids which we want to index/delete (depending on the https verb). They must be valid client id.
-elasticsearch_types | string array   | ["BookingIndex::Booking"] | The list of elasticsearch types we want to index/delete (see list of the valid types below).
-
-In one request you can't mix ids from different clients!
-
-### List of valid elasticsearch types
-- BookingIndex::Booking
-
-## Index meetings
-
-```shell
-curl -i -XPOST -d \
-  '{ "ids": [63], "elasticsearch_types": ["MeetingIndex::Meeting"] }' \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json" \
-  -u 'ibardarov@rifiniti.com:11223344' \
-  'https://internal-api.rifiniti.com/api/v1/index_requests/meetings'
-
-```
-> The above command POST data
-
-```json
-{
-  "ids": [
-    63
-  ],
-  "elasticsearch_types": [
-    "MeetingIndex::Meeting",
-  ]
-}
-```
-
-> The JSON response
-
-```json
-{"data":{"request_id":"8929f95c-b4bd-47e1-9759-3a30ab80d2db"}}
-```
-
-This endpoint creates index and delete requests.
-The only caveat is that you can't mix ids from different clients and types.
-
-### HTTP Request
-
-- `POST https://internal-api.rifiniti.com/api/v1/index_requests/meetings` - for index requests
-- `DELETE https://internal-api.rifiniti.com/api/v1/index_requests/meetings` - for delete requests
-- `GET https://internal-api.rifiniti.com/api/v1/index_requests/meetings/<request_id>` - for getting the status/progress of request
-
-### POST/DELETE Query Parameters
-
-Parameter           | Type           | Example    | Description
-------------------- | -------------- | ---------- | -----------
-ids                 | integer array  | [63] | The ids which we want to index/delete (depending on the https verb). They must be valid client id.
-elasticsearch_types | string array   | ["DepartmentIndex::MobilityBadgeDepartment", "OptimoIndex::BadgeOccupancyByDepartment"] | The list of elasticsearch types we want to index/delete (see list of the valid types below).
-
-In one request you can't mix ids from different clients!
-
-### List of valid elasticsearch types
-- MeetingIndex::Meeting
+  The call returns an array of JSONs with each floor results.
