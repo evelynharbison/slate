@@ -2,7 +2,7 @@
 
 This documentation is for the Rifiniti client API for data extraction.
 
-The API uses jwt tokens for authorization of the requests and that token must be present in the headers of each request. See [Authentication](#Authentication) for instruction on how to accuire a token.
+The API uses jwt tokens for authorization of the requests and that token must be present in the headers of each request. See [Authentication](#Authentication) for instruction on how to acquire a token.
 
 # Authentication
 
@@ -12,7 +12,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XPOST \
     -H "Content-Type: application/json" \
     -d '{ "email": "name@domain.com", "password": "SuperSecurePass"}' \
-    'http://subdomain.rifiniti.com/client_api/authenticate'
+    'https://subdomain.rifiniti.com/client_api/authenticate'
   ```
 
   > If authentication is successfull you will get json with the following structure:
@@ -24,12 +24,16 @@ The API uses jwt tokens for authorization of the requests and that token must be
   }
   ```
 
-  To accuire a token you must authenticate with your email and password for Optimo.
+  To acquire a token you must authenticate with your email and password for Optimo.
 
   `POST /client_api/authenticate`
 
   <aside class="notice">
     You must replace `subdomain` in the examples on the side with your company Rifiniti subdomain.
+  </aside>
+
+  <aside class="warning">
+    The generated token is valid for 24 hours. After that you need to re-authenticate.
   </aside>
 
   **Headers**
@@ -46,7 +50,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
     required      | password      | SupperSecurePass
 
 # Buildings
-  All the requests need to be authorized with the jwt token returned from the ```authenticate``` endpoint. It is also required to specify the version of the API on every request.
+  All the requests need to be authorized with the jwt token returned from the authenticate endpoint. It is also required to specify the version of the API on every request.
 
   <aside class="notice">
     For now there is only ```v1``` but version is required for future convinience. 
@@ -70,7 +74,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/meta/buildings'
+    'https://subdomain.rifiniti.com/client_api/meta/buildings'
   ```
   > JSON response structure
 
@@ -101,7 +105,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/meta/building/BLD1'
+    'https://subdomain.rifiniti.com/client_api/meta/building/BLD1'
   ```
   > JSON response structure
 
@@ -169,7 +173,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/results/building/BLD1?from=2018-01-24&to=2018-01-24'
+    'https://subdomain.rifiniti.com/client_api/results/building/BLD1?from=2018-01-24&to=2018-01-24'
   ```
 
   > JSON response structure
@@ -211,7 +215,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/results/buildings?from=2018-01-24&to=2018-01-24'
+    'https://subdomain.rifiniti.com/client_api/results/buildings?from=2018-01-24&to=2018-01-24'
   ```
 
   Get results for all buildings
@@ -233,7 +237,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors'
+    'https://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors'
   ```
 
   > JSON response structure
@@ -269,7 +273,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors/2'
+    'https://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors/2'
   ```
 
   > JSON response structure
@@ -331,7 +335,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/results/building/BLD1/floors/2?from=2018-01-24&to=2018-01-24'
+    'https://subdomain.rifiniti.com/client_api/results/building/BLD1/floors/2?from=2018-01-24&to=2018-01-24'
   ```
 
   > JSON response structure
@@ -366,11 +370,28 @@ The API uses jwt tokens for authorization of the requests and that token must be
   curl -XGET \
     -H "Authorization: your jwt token" \
     -H "Accept-Version: v1" \
-    'http://subdomain.rifiniti.com/client_api/results/building/BLD1/floors?from=2018-01-24&to=2018-01-24'
+    'https://subdomain.rifiniti.com/client_api/results/building/BLD1/floors?from=2018-01-24&to=2018-01-24'
   ```
 
   List results for all floors in a building.
 
   `GET /client_api/results/building/{{Building Identifier}}/floors`
+
+  The call returns an array of JSONs with each floor results.
+
+### All floors in all buildings
+
+  > Results for all buildings all floors
+
+  ```shell
+  curl -XGET \
+    -H "Authorization: your jwt token" \
+    -H "Accept-Version: v1" \
+    'https://subdomain.rifiniti.com/client_api/results/floors?from=2018-01-24&to=2018-01-24'
+  ```
+
+  List results for all floors all buildings.
+
+  `GET /client_api/results/floors`
 
   The call returns an array of JSONs with each floor results.
