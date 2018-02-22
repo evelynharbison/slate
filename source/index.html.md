@@ -93,7 +93,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
 
   List all monitored buildings with their identificator and service level.
 
-  `GET/client_api/meta/buildings`
+  `GET /client_api/meta/buildings`
 
   The call returns an array of JSONs.
 
@@ -184,10 +184,10 @@ The API uses jwt tokens for authorization of the requests and that token must be
     "service_level": "advanced",
     "area": 132435,
     "workstation_space_capacity": 903,
-    "meeting_space_capacity": 251,
-    "support_space_capacity": 14,
+    "meeting_space_capacity": 123,
+    "support_space_capacity": 42,
     "headcount": 759,
-    "attendance": 292.2,
+    "attendance": 123.4,
     "average_utilization": 253.4,
     "peak_utilization": 296,
     "average_utilization_percent": 28.1,
@@ -356,7 +356,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
 }
   ```
 
-  Get metadata for floor.
+  Get results for a floor.
 
   `GET /client_api/results/building/{{Building Identifier}}/floors/{{Floor Level}}`
 
