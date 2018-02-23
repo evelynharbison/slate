@@ -64,7 +64,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   required      | Accept-Version  | v1
 
 ## Metadata
-  Buildings metadata contains the identificator of the building which can be used to query results for that particular building as well as the service level the building have.
+  A building's metadata contains the identificator of the building, which can be used to query results for that particular building, and the building's service level.
 
 ### All Buildings
 
