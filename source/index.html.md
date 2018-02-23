@@ -2,7 +2,7 @@
 
 This documentation is for the Rifiniti client API for data extraction.
 
-The API uses jwt tokens for authorization of the requests and that token must be present in the headers of each request. See [Authentication](#Authentication) for instruction on how to acquire a token.
+The API uses jwt tokens that are present within a request's header for authentication. See [Authentication](#Authentication) for instruction on how to acquire a token.
 
 # Authentication
 
@@ -15,7 +15,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
     'https://subdomain.rifiniti.com/client_api/authenticate'
   ```
 
-  > If authentication is successfull you will get json with the following structure:
+  > If authentication is successfull, you will get JSON with the following structure:
 
   ```json
   {
@@ -24,12 +24,12 @@ The API uses jwt tokens for authorization of the requests and that token must be
   }
   ```
 
-  To acquire a token you must authenticate with your email and password for Optimo.
+  To acquire a token, you must authenticate your email and password for Optimo.
 
   `POST /client_api/authenticate`
 
   <aside class="notice">
-    You must replace `subdomain` in the examples on the side with your company Rifiniti subdomain.
+    You must replace `subdomain` in the examples on the side with your company's Rifiniti subdomain.
   </aside>
 
   <aside class="warning">
@@ -64,7 +64,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   required      | Accept-Version  | v1
 
 ## Metadata
-  Buildings metadata contains the identificator of the building which can be used to query results for that particular building as well as the service level the building have.
+  A building's metadata contains an identificator that can be used to query results for that particular building and the service level.
 
 ### All Buildings
 
@@ -167,7 +167,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
 
 ### Single Building
 
-  > Results for single building:
+  > Results for a single building:
 
   ```shell
   curl -XGET \
@@ -203,7 +203,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   }
   ```
 
-  Get results for specific building
+  Get results for a specific building:
 
   `GET /client_api/results/building/{{Building Identifier}}`
 
@@ -218,16 +218,16 @@ The API uses jwt tokens for authorization of the requests and that token must be
     'https://subdomain.rifiniti.com/client_api/results/buildings?from=2018-01-24&to=2018-01-24'
   ```
 
-  Get results for all buildings
+  Get results for all buildings:
 
   `GET /client_api/results/building/{{Building Identifier}}`
 
-  Responds with an array of jsons with results for each building.
+  Responds with an array of JSONs with results for each building.
 
 # Floors
 
 ## Metadata
-  Floors metadata contains the floor level, the building identificator, the area and the service level of the floor.
+  Floor metadata contains the floor level, the building identificator, the area and the service level of the floor.
 
 ### All Floors in a building
 
@@ -240,7 +240,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
     'https://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors'
   ```
 
-  > JSON response structure
+  > JSON response structure:
 
   ```json
   [
@@ -259,7 +259,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
   ]
   ```
 
-  List the floors inside of a building with metadata for them.
+  List the floors inside of a building with metadata.
 
   `GET /client_api/meta/building/{{Building Identifier}}/floors`
 
@@ -276,7 +276,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
     'https://subdomain.rifiniti.com/client_api/meta/building/BLD1/floors/2'
   ```
 
-  > JSON response structure
+  > JSON response structure:
 
   ```json
   {
@@ -329,7 +329,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
 
 ### Single floor
 
-  > Results for single floor
+  > Results for single floor:
 
   ```shell
   curl -XGET \
@@ -338,7 +338,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
     'https://subdomain.rifiniti.com/client_api/results/building/BLD1/floors/2?from=2018-01-24&to=2018-01-24'
   ```
 
-  > JSON response structure
+  > JSON response structure:
 
   ```json
   {
@@ -364,7 +364,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
 
 ### All floors in a building
 
-  > Results for all floors inside a building
+  > Results for all floors inside a building:
 
   ```shell
   curl -XGET \
@@ -381,7 +381,7 @@ The API uses jwt tokens for authorization of the requests and that token must be
 
 ### All floors in all buildings
 
-  > Results for all buildings all floors
+  > Results for all buildings all floors:
 
   ```shell
   curl -XGET \
